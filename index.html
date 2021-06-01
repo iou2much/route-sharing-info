@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>拼车小工具</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+
+	<meta charset="utf-8"/>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+
+	<!-- <link href="css/bootstrap.min.css" rel="stylesheet">     -->
+	<script src="js/jquery.min.js"></script>
+
+
+    <script src="js/popper.min.js"></script>
+    <!-- <script src="js/bootstrap.min.js"></script> -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    
+
+    <!-- <link href="css/jquery.bsPhotoGallery.css" rel="stylesheet">
+    <script src="js/jquery.bsPhotoGallery.js"></script>	 -->
+	<script type="text/javascript" src="js/popup.js"></script>
+
+	<style>
+	    body {
+	    	font-family: 'Microsoft Yahei';
+	    	width: 1000px;
+	    	min-height: 100px;
+			background-color: #f6f6f6;
+	    }
+	    a {
+	    	margin-right: 10px;
+	    }
+		.modal-dialog{
+			max-width: 600px;
+		}
+		.bspImgWrapper{
+			height: 200px;
+			border:1px solid #cccccc;
+		}
+        html, body, #container {
+      width: 100%;
+      height: 90%;
+    }
+	</style>
+    <style type="text/css">
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 90%;
+            overflow-y: auto;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+        #panel .amap-call {
+            background-color: #009cf9;
+            border-top-left-radius: 4px;
+   	        border-top-right-radius: 4px;
+        }
+        #panel .amap-lib-driving {
+	        border-bottom-left-radius: 4px;
+   	        border-bottom-right-radius: 4px;
+            overflow: hidden;
+        }
+        .container_inp {
+            padding: 16px 12px;
+        }
+        .bypass{
+            width: 100%;
+            /* display: none; */
+        }
+        .form-group .col-sm-10{
+            margin-bottom: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=7b25906a1b3122104afeef48299df91b&plugin=AMap.Driving"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+	<div class="container_inp">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+          <div class="col-sm-10">
+            <input class="inp" type="input" id="name" value="联系方式" tip="联系方式"/>
+          </div>
+		  <div class="col-sm-10">
+			<input name="role" class="role" checked type="radio" id="demander" value="demander"/><label for="demander">乘客</label>
+			<input name="role" class="role" type="radio" id="provider" value="provider"/><label for="provider">车主</label>
+		  </div>
+		  <div class="col-sm-10">
+			<input class="inp" type="text" id="from" value="始发地" tip="始发地"/>
+		  </div>
+		  <div class="col-sm-10">
+            <select class="form-control" id="to">
+                <option value="cvte1">目的地:一产</option>
+                <option value="cvte2">目的地:二产</option>
+                <option value="cvte3">目的地:三产</option>
+                <option value="cvte4">目的地:四产</option>
+            </select>
+		  </div>
+		  <div class="col-sm-10 bypass">
+		  <label for="selectpicker" style="padding: 0;" class="col-sm-3 control-label">同目的地的小伙伴(仅显示乘客)</label>
+            <select id="bypass" name="selectpicker" class="selectpicker" multiple data-live-search="true">
+             </select>              
+		  </div>
+		  <!-- <div class="col-sm-10">
+		    <label for="extra" class="col-sm-1 control-label">补充说明</label>
+            <input type="text" value=""
+		  </div> -->
+		  <div class="col-sm-10">
+			<input class="btn-primary" value="查询路线" type="button" id="search"/>
+			<input class="btn btn-info" value="登记信息" type="button" id="save"/>
+		  </div>
+		</div>
+	</form> 
+    </div>
+
+
+    <div id="container"></div>
+    <div id="panel"></div>
+
+
+    </body>
+    <script type="text/javascript">
+    
+     
+    </script>
+</html>
+
