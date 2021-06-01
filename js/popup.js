@@ -4,11 +4,12 @@ $(function() {
 	var BK_URL = "http://120.78.231.95/cn_api";
 	var start = 0;
 	var markers_cache = [];
+	var provider_markers_cache = [];
 
    //基本地图加载
 	window.map = new AMap.Map("container", {
 		resizeEnable: true,
-		// center: [116.397428, 39.90923],//地图中心点
+		center: [113.399606,23.192359],//地图中心点
 		zoom: 13 //地图显示的缩放级别
 	});
 	//构造路线导航类
@@ -46,7 +47,11 @@ $(function() {
 				for (var i=0;i<res.length;i++) {
 					var from = res[i]['from'];
 
-					html += '<option value="'+res[i]['from']+'">'+res[i]['from']+'</option>'
+					var time = '';
+					if(res[i]['extra']){
+						time = '  /  ' + res[i]['extra'];
+					}
+					html += '<option value="'+res[i]['from']+'">'+res[i]['from']+time+'</option>'
 					if(res[i]['loc']){
 						var loc = res[i]['loc'].split(',');
 						locs.push(loc[0],loc[1])
@@ -55,7 +60,7 @@ $(function() {
 						// 	// title: '北京'
 						// });
 						// markerList.push(marker);
-						console.log(from.split('::')[0]);
+						// console.log(from.split('::')[0]);
 						var text = new AMap.Text({
 							text:from.split('::')[0],
 							anchor:'center', // 设置文本标记锚点
@@ -101,8 +106,77 @@ $(function() {
 	$('#to').change(function(){
 		get_bypass_list($('#to').val())
 	});
-	get_bypass_list('cvte1')
 
+	get_bypass_list('cvte1');
+
+	function get_provider_info(dst){
+		if(map){
+			map.remove(provider_markers_cache);
+		}
+		$.ajax({
+			url: BK_URL+'/get_provider_info',
+			type:"GET",
+			data:"to="+dst,
+			dataType: 'json',
+			success: function(res){
+				var html = ''
+				var locs = [];
+				var markerList = []
+				for (var i=0;i<res.length;i++) {
+					var from = res[i]['from'];
+
+					// html += '<option value="'+res[i]['from']+'">'+res[i]['from']+'</option>'
+					if(res[i]['loc']){
+						var loc = res[i]['loc'].split(',');
+						locs.push(loc[0],loc[1])
+						// var marker = new AMap.Marker({
+						// 	position: new AMap.LngLat(loc[0],loc[1]),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+						// 	// title: '北京'
+						// });
+						// markerList.push(marker);
+						// console.log(from.split('::')[0]);
+						var text = new AMap.Text({
+							text:from.split('::')[0],
+							anchor:'center', // 设置文本标记锚点
+							draggable:true,
+							cursor:'pointer',
+							angle:10,
+							style:{
+								'padding': '0.25rem 0.25rem',
+								'margin-bottom': '1rem',
+								'border-radius': '.25rem',
+								'background-color': 'blue',
+								'width': '5rem',
+								'border-width': 0,
+								'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+								'text-align': 'center',
+								'font-size': '12px',
+								'color': 'white'
+							},
+							position: loc
+						});
+					
+						text.setMap(map);
+						provider_markers_cache.push(text)
+						  
+					}
+				}
+
+				// 将创建的点标记添加到已有的地图实例：
+				map.add(markerList);
+		
+	
+			},
+		});
+	}
+	$('#display_provider').change(function(){
+		if($(this).is(':checked')){
+			get_provider_info($('#to').val())
+		}else{
+			map.remove(provider_markers_cache);
+			// get_bypass_list($('#to').val());
+		}
+	})
 	var dsts = {
 		'cvte1':'CVTE第一产业园',
 		'cvte2':'CVTE第二产业园',
@@ -138,9 +212,13 @@ $(function() {
 		});	
 	})
 	$('#save').click(function(){
-             if($('#name').val()=='联系方式'){alert('请填一下名字或联系方式，以便他人联系');return;}
+        if($('#name').val()=='联系方式'){
+			alert('请填一下名字或联系方式，以便他人联系');
+			return;
+		}
 		var from = $('#name').val()+'::'+$('#from').val();
 		var data = "name="+$('#name').val()+"&role="+$('.role:checked').val()+"&from="+from+"&to="+$('#to').val();
+		data += '&extra='+$('#extra').val();
 		if($('.role:checked').val()=='provider'){
 			var bp = $('#bypass option:checked');
 			for(var i=0;i<bp.length;i++){

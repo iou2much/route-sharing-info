@@ -91,7 +91,7 @@
 	<form class="form-horizontal">
 		<div class="form-group">
           <div class="col-sm-10">
-            <input class="inp" type="input" id="name" value="联系方式" tip="联系方式"/>
+            <input class="inp" type="input" id="name" value="" tip=""/>(姓名或域名账号，方便对方联系)
           </div>
 		  <div class="col-sm-10">
 			<input name="role" class="role" checked type="radio" id="demander" value="demander"/><label for="demander">乘客</label>
@@ -111,24 +111,31 @@
 		  <div class="col-sm-10 bypass">
 		  <label for="selectpicker" style="padding: 0;" class="col-sm-3 control-label">同目的地的小伙伴(仅显示乘客)</label>
             <select id="bypass" name="selectpicker" class="selectpicker" multiple data-live-search="true">
-             </select>              
+             </select>
 		  </div>
 		  <div class="col-sm-10">
-		    <label for="extra" class="col-sm-1 control-label">补充信息</label>
-            <input type="text" id="extra" value="" />
+		    <label for="extra" class="col-sm-1 control-label">出发时间</label>
+            <input type="text" id="extra" value="" />(请尽量简短，如,7:30-8:00am)
 		  </div> 
 		  <div class="col-sm-10">
 			<input class="btn-primary" value="查询路线" type="button" id="search"/>
 			<input class="btn btn-info" value="登记信息" type="button" id="save"/>
+            <input type="checkbox" id="display_provider" />
+		    <label for="display_provider" class=" control-label">显示同目的地车主出发点</label>
 		  </div>
 		</div>
-	</form> 
+	</form>
+
     </div>
 
 
     <div id="container"></div>
     <div id="panel"></div>
-
+    <p>
+        小工具用于供需双方的信息交换，看到顺路的小伙伴请私下联系，此工具在提供基本方便的前提下不作细致体验优化。
+        <br/>
+        注意，如角色-姓名-目的地相同，数据会被覆盖（可更新信息）; 如需删除过期数据，请企业微信联系libo.
+    </p>
 
     </body>
     <script type="text/javascript">
