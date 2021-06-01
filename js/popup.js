@@ -1,8 +1,10 @@
 
 $(function() {
-	//var BK_URL = "http://10.22.32.13:6071";
+	// var BK_URL = "http://10.22.32.15:6070/cn_api";
 	var BK_URL = "http://120.78.231.95/cn_api";
 	var start = 0;
+	var markers_cache = [];
+
    //基本地图加载
 	window.map = new AMap.Map("container", {
 		resizeEnable: true,
@@ -25,28 +27,82 @@ $(function() {
 		if($(this).val() == ''){
 			$(this).val($(this).attr('tip'))
 		}
-	})
+	});
+	function get_bypass_list(dst){
+		if(map){
+			map.remove(markers_cache);
 
-	$('#to').change(function(){
+		}
 		$.ajax({
 			url: BK_URL+'/get_info',
 			type:"GET",
-			data:"to="+$('#to').val(),
+			data:"to="+dst,
 			// data:"name="+$('#name').val()+"&role="+$('#role').val()+"&from="+$('#from').val()+"&to="+$('#to').val(),
 			dataType: 'json',
 			success: function(res){
 				var html = ''
+				var locs = [];
+				var markerList = []
 				for (var i=0;i<res.length;i++) {
+					var from = res[i]['from'];
+
 					html += '<option value="'+res[i]['from']+'">'+res[i]['from']+'</option>'
+					if(res[i]['loc']){
+						var loc = res[i]['loc'].split(',');
+						locs.push(loc[0],loc[1])
+						// var marker = new AMap.Marker({
+						// 	position: new AMap.LngLat(loc[0],loc[1]),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+						// 	// title: '北京'
+						// });
+						// markerList.push(marker);
+						console.log(from.split('::')[0]);
+						var text = new AMap.Text({
+							text:from.split('::')[0],
+							anchor:'center', // 设置文本标记锚点
+							draggable:true,
+							cursor:'pointer',
+							angle:10,
+							style:{
+								'padding': '0.25rem 0.25rem',
+								'margin-bottom': '1rem',
+								'border-radius': '.25rem',
+								'background-color': 'red',
+								'width': '5rem',
+								'border-width': 0,
+								'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
+								'text-align': 'center',
+								'font-size': '8px',
+								'color': 'white'
+							},
+							position: loc
+						});
+					
+						text.setMap(map);
+						markers_cache.push(text)
+						  
+					}
 				}
 				$('.selectpicker').html(html)
 				$('.selectpicker').selectpicker('refresh');
 
+
+				
+				// 将创建的点标记添加到已有的地图实例：
+				map.add(markerList);
+		
 				console.log('done')
 	
 			},
 		});
+		
+
+	}
+
+	$('#to').change(function(){
+		get_bypass_list($('#to').val())
 	});
+	get_bypass_list('cvte1')
+
 	var dsts = {
 		'cvte1':'CVTE第一产业园',
 		'cvte2':'CVTE第二产业园',
@@ -58,6 +114,9 @@ $(function() {
 		var path = [{'keyword':$('#from').val(),'city':city}];
 		var dst = dsts[$('#to').val()]
 		var passby = $('.selectpicker').val();
+		if(passby.length>4){
+			alert('至多选择四个途经点')
+		}
 		for(var i=0;i<passby.length;i++){
 
 			var dot = passby[i].split('::')[1];
@@ -68,7 +127,7 @@ $(function() {
 		}
 
 		path.push({'keyword':dst,'city':city})
-		console.log(path)
+		// console.log(path)
 		driving.search(path, function(status, result) {
 			// result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
 			if (status === 'complete') {
