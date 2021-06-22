@@ -89,6 +89,7 @@ $(function() {
 				}
 				$('.selectpicker').html(html)
 				$('.selectpicker').selectpicker('refresh');
+				selected_bypass = {};
 
 
 				
@@ -100,8 +101,27 @@ $(function() {
 			},
 		});
 		
-
+		if($('#display_provider').is(':checked')){
+			get_provider_info(dst)
+		}
 	}
+	var selected_bypass = {};
+	var selected_queue = [];
+	$('.selectpicker').on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+		// var selected = $(e.currentTarget).val();
+		if(newValue){
+			selected_queue.push(clickedIndex)
+			var o = $($('.selectpicker option')[clickedIndex]).val();
+			selected_bypass[clickedIndex] = o;
+		}else{
+			selected_queue.splice(selected_queue.indexOf(clickedIndex),1)
+		}
+
+		console.log(clickedIndex)
+		console.log(selected_queue)
+		// console.log(newValue)
+		// console.log(oldValue)
+	});
 
 	$('#to').change(function(){
 		get_bypass_list($('#to').val())
@@ -146,11 +166,11 @@ $(function() {
 								'margin-bottom': '1rem',
 								'border-radius': '.25rem',
 								'background-color': 'blue',
-								'width': '5rem',
+								'width': '6rem',
 								'border-width': 0,
 								'box-shadow': '0 2px 6px 0 rgba(114, 124, 245, .5)',
 								'text-align': 'center',
-								'font-size': '12px',
+								'font-size': '8px',
 								'color': 'white'
 							},
 							position: loc
@@ -177,6 +197,7 @@ $(function() {
 			// get_bypass_list($('#to').val());
 		}
 	})
+	//get_provider_info($('#to').val());
 	var dsts = {
 		'cvte1':'CVTE第一产业园',
 		'cvte2':'CVTE第二产业园',
@@ -184,10 +205,18 @@ $(function() {
 		'cvte4':'CVTE第四产业园',
 	}
 	$('#search').click(function(){
+        if($('#from').val().trim() == '始发地'){
+			alert('请填一下始发地');
+			return;
+		}
 		var city = '广州';
 		var path = [{'keyword':$('#from').val(),'city':city}];
 		var dst = dsts[$('#to').val()]
-		var passby = $('.selectpicker').val();
+
+		var passby = [];
+		for(var i=0;i<selected_queue.length;i++){
+			passby.push(selected_bypass[selected_queue[i]])
+		}
 		if(passby.length>4){
 			alert('至多选择四个途经点')
 		}
@@ -201,6 +230,14 @@ $(function() {
 		}
 
 		path.push({'keyword':dst,'city':city})
+		var path_info = '';
+		for(var i=0;i<path.length;i++){
+			if(path_info){
+				path_info += ' -> ';
+			}
+			path_info += path[i]['keyword']
+		}
+		$('#path-info').text(path_info)
 		// console.log(path)
 		driving.search(path, function(status, result) {
 			// result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
@@ -212,8 +249,16 @@ $(function() {
 		});	
 	})
 	$('#save').click(function(){
-        if($('#name').val()=='联系方式'){
+        if($('#name').val()=='联系方式' || $('#name').val()==''){
 			alert('请填一下名字或联系方式，以便他人联系');
+			return;
+		}
+        if($('#from').val()=='\b\b始发地' || $('#from').val()==''){
+			alert('请填一下始发地');
+			return;
+		}
+        if($('#extra').val()=='出发时间' || $('#extra').val()==''){
+			alert('请填一下出发时间');
 			return;
 		}
 		var from = $('#name').val()+'::'+$('#from').val();
@@ -224,7 +269,6 @@ $(function() {
 			for(var i=0;i<bp.length;i++){
 				data += '&bypass='+$(bp[i]).val().split('::')[0];
 			}
-
 		}
 		$.ajax({
 			url: BK_URL+'/save_info',
