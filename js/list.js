@@ -1,4 +1,5 @@
-var BK_URL = "http://10.22.32.15:8170/cn_api";
+// var BK_URL = "http://10.22.32.15:8170/cn_api";
+var BK_URL = "http://pin.test.seewo.com/cn_api";
 var dsts = {
     'c1':'一产',
     'c2':'二产',

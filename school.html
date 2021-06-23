@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>学校用户数据</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .input-card {
+            width: 25rem;
+        }
+
+        .input-card .btn {
+            width: 7rem;
+            margin-right: .7rem;
+        }
+
+        .input-card .btn:last-child {
+            margin-right: 0;
+        }
+        .school_point {
+            text-align: center;
+            vertical-align: middle;
+            background-color: black; 
+            height: 40px; 
+            width: 40px; 
+            border: 5px solid red; 
+            border-radius: 20px; 
+            padding: 7px;
+            color: white;
+            box-shadow: hsl(180, 100%, 50%) 0px 0px 1px;
+        }
+        .school_point p{
+            display:none;
+        }
+        .school_point:hover p{
+            display:block;
+            z-index: 10000;
+        }
+        .input-card{
+            height: 300px;
+        }
+        .col-sm-10{
+            padding-left: 0;
+        }
+        .school-info {
+            width: 11em;
+            background: yellowgreen;
+            font-size: 18px;
+            padding: 12px 10px;
+            border-radius: 10px;;
+            text-align: center;
+        }
+        .dropdown {
+            margin-bottom: 5px;
+        }
+    </style>
+	<script src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+</head>
+<body>
+<div id="container" class="map" tabindex="0"></div>
+<div class="input-card">
+    <h4>学校用户数据</h4>
+    <div class="input-item">
+        <div class="col-sm-10">
+        <select id="province" name="selectpicker" class="selectpicker" data-live-search="true">
+        </select>
+        <select id="city" name="selectpicker" class="selectpicker" data-live-search="true">
+        </select>
+        <select id="school" name="selectpicker" class="selectpicker" data-live-search="true">
+        </select>
+        <!-- <input type="button" class="btn" value="统计" id="query" onclick='query()'/> -->
+        </div> 
+
+        <div class="col-sm-10">
+        <!-- <input type="input" class="" value="" id="user"/> -->
+        <!-- <input type="button" class="btn" value="查询单用户" id="query" onclick='query()'/> -->
+        </div> 
+    </div>
+</div>
+<!-- <script src="js/china.js"></script> -->
+<script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=1.4.15&key=7b25906a1b3122104afeef48299df91b&plugin=AMap.MarkerClusterer"></script>
+<script type="text/javascript">
+	// var BK_URL = "http://120.78.231.95/cn_api";
+	var BK_URL = "http://10.22.32.15:8070";
+    var cluster, markers = [];
+
+    var map = new AMap.Map("container", {
+        resizeEnable: true,
+        center: [105, 34],
+        zoom: 4
+    });
+
+
+
+    var count = markers.length;
+    var _renderClusterMarker = function (context) {
+        var factor = Math.pow(context.count / count, 1 / 18);
+        var div = document.createElement('div');
+        var Hue = 180 - factor * 180;
+        var bgColor = 'hsla(' + Hue + ',100%,50%,0.7)';
+        var fontColor = 'hsla(' + Hue + ',100%,20%,1)';
+        var borderColor = 'hsla(' + Hue + ',100%,40%,1)';
+        var shadowColor = 'hsla(' + Hue + ',100%,50%,1)';
+        div.style.backgroundColor = bgColor;
+        var sum = 0;
+        for(var i = 0;i<context.markers.length;i++){
+            sum += context.markers[i].w.count_num;
+        }
+
+        var size = Math.round(30 + Math.pow(context.count / count, 1 / 5) * 20);
+        div.style.width = div.style.height = size + 'px';
+        div.style.border = 'solid 1px ' + borderColor;
+        div.style.borderRadius = size / 2 + 'px';
+        div.style.boxShadow = '0 0 1px ' + shadowColor;
+        div.innerHTML = sum;
+        console.log(sum)
+        div.style.lineHeight = size + 'px';
+        div.style.color = fontColor;
+        div.style.fontSize = '14px';
+        div.style.textAlign = 'center';
+        context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
+        context.marker.setContent(div)
+    };
+
+
+    function addCluster(tag) {
+        if (cluster) {
+            cluster.setMap(null);
+        }
+        if (tag == 2) {//完全自定义
+            cluster = new AMap.MarkerClusterer(map, markers, {
+                gridSize: 80,
+                renderClusterMarker: _renderClusterMarker
+            });
+        } else if (tag == 1) {//自定义图标
+            var sts = [{
+                url: "https://a.amap.com/jsapi_demos/static/images/blue.png",
+                size: new AMap.Size(32, 32),
+                offset: new AMap.Pixel(-16, -16)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/green.png",
+                size: new AMap.Size(32, 32),
+                offset: new AMap.Pixel(-16, -16)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/orange.png",
+                size: new AMap.Size(36, 36),
+                offset: new AMap.Pixel(-18, -18)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/red.png",
+                size: new AMap.Size(48, 48),
+                offset: new AMap.Pixel(-24, -24)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/darkRed.png",
+                size: new AMap.Size(48, 48),
+                offset: new AMap.Pixel(-24, -24)
+            }];
+            cluster = new AMap.MarkerClusterer(map, markers, {
+                styles: sts,
+                gridSize: 80
+            });
+        } else {//默认样式
+            cluster = new AMap.MarkerClusterer(map, markers, {gridSize: 80});
+        }
+    }
+
+	function get_area(type,province_id){
+        var data = "type="+type;
+        if(type==2){
+            if(province_id){
+                data += '&province_id='+province_id;
+            }else{
+                $('#city').html('')
+                $('#city').selectpicker('refresh');
+                return
+            }
+        }
+
+		$.ajax({
+			url: BK_URL+'/area',
+			type:"GET",
+			data:data,
+			dataType: 'json',
+			success: function(res){
+				var html = '<option value=""></option>'
+				for (var i=0;i<res.length;i++) {
+					html += '<option value="'+res[i]['id']+'">'+res[i]['name']+'</option>'
+				}
+                if(type==1){
+				    $('#province').html(html)
+				    $('#province').selectpicker('refresh');
+                }else{
+				    $('#city').html(html)
+				    $('#city').selectpicker('refresh');
+                }
+				console.log('done')
+			},
+		});
+	}
+    get_area(1);
+	$('#province').on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+        // if(!$(e.currentTarget).val()){
+        //     return
+        // }
+		var selected = $(e.currentTarget).val();
+        get_area(2,selected);
+        $('#school').html("")
+		$('#school').selectpicker('refresh');
+        query()
+
+	});
+	$('#city').on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+        // if(!$(e.currentTarget).val()){
+        //     return
+        // }
+        query()
+	});
+	$('#school').on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+        // if(!$(e.currentTarget).val()){
+        //     return
+        // }
+        query()
+	});
+    // query()
+    function query(){
+        var pid = $('#province').val();
+        var cid = $('#city').val();
+        var sid = $('#school').val();
+        var data = "";
+        if(pid){
+            data += 'province_id='+pid;
+        }
+        if(cid){
+            data += '&city_id='+cid;
+        }
+        if(sid){
+            data += '&school_id='+sid;
+        }
+		$.ajax({
+			url: BK_URL+'/school',
+			type:"GET",
+			data:data,
+			dataType: 'json',
+			success: function(points){
+                markers = [];
+                var total = 0
+                var html = '<option value=""></option>'
+                for (var i = 0; i < points.length; i += 1) {
+                    var c = points[i]['user_count'];
+                    // console.log(c)
+                    markers.push(new AMap.Marker({
+                        position: points[i]['lnglat'],
+                        content: '<div class="school_point" style="">'+c+'<p class="school-info">'+points[i]['name']+'</p></div>',
+                        offset: new AMap.Pixel(-15, -52),
+                        count_num: c
+                    }))	
+                    html += '<option value="'+points[i]['id']+'">'+points[i]['name']+'</option>'
+ 
+                }
+                console.log(sid)
+                if(!sid || sid.length<=0){
+				    $('#school').html(html)
+				    $('#school').selectpicker('refresh');
+                }
+                console.log(markers.length)
+                count = markers.length;
+                addCluster(2);
+				console.log(total)
+				console.log('done')
+			},
+		});
+
+    }
+
+</script>
+</body>
+</html>

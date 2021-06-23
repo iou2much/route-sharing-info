@@ -3,6 +3,8 @@
 <head>
 	<title>拼车小工具</title>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
 
@@ -98,7 +100,7 @@
 			<input name="role" class="role" type="radio" id="provider" value="provider"/><label for="provider">车主</label>
 		  </div>
 		  <div class="col-sm-10">
-			<input class="inp" type="text" id="from" value="始发地" tip="始发地"/>
+            <input type="text" class="inp" id="from" value="始发地" tip="始发地" />
 		  </div>
 		  <div class="col-sm-10">
             <select class="form-control" id="to">
@@ -108,20 +110,23 @@
                 <option value="cvte4">目的地:四产</option>
             </select>
 		  </div>
+		  <div class="col-sm-10">
+            <input type="text" class="inp" id="extra" value="出发时间" tip="出发时间" />(请尽量简短，如,7:30-8:00am)
+		  </div> 
+
 		  <div class="col-sm-10 bypass">
-		  <label for="selectpicker" style="padding: 0;" class="col-sm-3 control-label">同目的地的小伙伴(仅显示乘客)</label>
+		  <label for="selectpicker" style="padding: 0;" class="col-sm-3 control-label">途经点（同目的地的乘客)</label>
             <select id="bypass" name="selectpicker" class="selectpicker" multiple data-live-search="true">
              </select>
 		  </div>
 		  <div class="col-sm-10">
-		    <label for="extra" class="col-sm-1 control-label">出发时间</label>
-            <input type="text" id="extra" value="" />(请尽量简短，如,7:30-8:00am)
-		  </div> 
-		  <div class="col-sm-10">
-			<input class="btn-primary" value="查询路线" type="button" id="search"/>
+		    <label for="display_provider" class=" control-label">显示同目的地车主出发点(图中蓝色标签)</label>
+            <input checked type="checkbox" id="display_provider" />
+            <br/>
 			<input class="btn btn-info" value="登记信息" type="button" id="save"/>
-            <input type="checkbox" id="display_provider" />
-		    <label for="display_provider" class=" control-label">显示同目的地车主出发点</label>
+			<input class="btn-primary" value="查询路线" type="button" id="search"/>
+            (上边选择的途径点会显示出来,途经顺序与手动选择途经点的顺序一致)
+            <p id="path-info"></p>
 		  </div>
 		</div>
 	</form>

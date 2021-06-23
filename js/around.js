@@ -1,6 +1,7 @@
 
 $(function() {
-	var BK_URL = "http://10.22.32.15:8170/cn_api";
+	// var BK_URL = "http://10.22.32.15:8170/cn_api";
+	var BK_URL = "http://pin.test.seewo.com/cn_api";
 	// var BK_URL = "http://120.78.231.95/cn_api";
 
 	$('.inp').focus(function(){
