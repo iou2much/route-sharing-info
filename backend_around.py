@@ -131,22 +131,23 @@ def get_info():
     for f in glob.glob(f'around-data/*_{role}_*{data["from"]}_*{data["to"]}_*.json'):
         if data["role"] == 'not_provider' and 'provider' in f:
             continue
+        print(f)
         info_date = f.split('_')[0].split('/')[-1]
         print(info_date)
         if info_date < today:
             continue
         c = open(f,'r').read()
         # print(c)
-        data = json.loads(c)
-        e = parse_time(data['end_time'])
+        res_data = json.loads(c)
+        e = parse_time(res_data['end_time'])
         bypass_e = 0
         try:
-            bypass_e = parse_time(data['bypass_end_time'])
+            bypass_e = parse_time(res_data['bypass_end_time'])
         except:
             pass
         
         if now < e or now < bypass_e :
-            res.append(data)
+            res.append(res_data)
     
     return Response(json.dumps(res), mimetype='application/json',headers={"Access-Control-Allow-Headers": "x-requested-with,Cache-Control,Pragma,Content-Type,Token, Content-Type","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Methods":"POST, GET, OPTIONS, DELETE","Cache-Control":"no-cache",'Access-Control-Allow-Origin':'*'})
 

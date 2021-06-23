@@ -1,6 +1,6 @@
-// var BK_URL = "http://10.22.32.15:8170/cn_api";
+var BK_URL = "http://10.22.32.15:8170/cn_api";
 // var BK_URL = "http://pin.test.seewo.com/pin/cn_api";
-var BK_URL = "http://ds.seewo.com/dm/pin/cn_api";
+// var BK_URL = "http://ds.seewo.com/dm/pin/cn_api";
 var dsts = {
     'c1':'一产',
     'c2':'二产',
@@ -24,6 +24,15 @@ function query(role,from,to){
             html = '<tr><td colspan="4">无匹配信息</td></tr>'
         }
         $('.bypass_col').hide()
+        var has_bypass = false;
+        var colspan = 4;
+        for (var i=0;i<res.length;i++) {
+            if(res[i]['bypass'] && res[i]['bypass'] != 'undefined'){
+                has_bypass = true;
+                colspan = 5;
+            }
+        }
+
         for (var i=0;i<res.length;i++) {
             var from = res[i]['from'];
             var bypass = '';
@@ -45,7 +54,7 @@ function query(role,from,to){
 
             html += '<tr onclick="show_extra(this,\''+res[i]['account']+'_'+seed+'\')" >'
             html += '<td>'+dsts[from] +'&nbsp;<br/>出发时间:'+date+'&nbsp;<br/>'+start_time+'~'+end_time+'</td>';
-            if(bypass!=''){
+            if(has_bypass){
                 html += '<td>'+bypass+'</td>';
                 $('.bypass_col').show()
             }
@@ -53,7 +62,7 @@ function query(role,from,to){
             html += '<td>'+who+'</td>';
             html += '<td><a href="javascript:void(0)">查看备注</a></td>';
             html += '</tr>'
-            html += '<tr style="display:none;" class="'+res[i]['account']+'_'+seed+'"><td colspan="4">备注信息：'+res[i]['extra_info']+'</td></tr>'
+            html += '<tr style="display:none;" class="'+res[i]['account']+'_'+seed+'"><td colspan="'+colspan+'">备注信息：'+res[i]['extra_info']+'</td></tr>'
         }
         $('#info-list').html(html)
 
