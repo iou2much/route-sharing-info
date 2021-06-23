@@ -42,6 +42,11 @@ $(function() {
 	$('#datetimepicker1').datetimepicker({
 		format: 'YYYY-MM-DD'
 	});
+	// $('#datetimepicker1').datetimepicker().on('dp.show', function() {
+	// 	console.log($(this))
+	// 	$(this).blur();
+	// });
+
 	$('#datetimepicker2').datetimepicker({
 		format: 'hh:mm A',
 	});
@@ -138,6 +143,10 @@ $(function() {
 			},
 		  });
 	})
+	  
+	// $('.input-group-append').click(function(){
+	// 	$('.date input').blur()
+	// })
 
 
 

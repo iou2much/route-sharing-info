@@ -131,9 +131,9 @@ def get_info():
     for f in glob.glob(f'around-data/*_{role}_*{data["from"]}_*{data["to"]}_*.json'):
         if data["role"] == 'not_provider' and 'provider' in f:
             continue
-        print(f)
+        # print(f)
         info_date = f.split('_')[0].split('/')[-1]
-        print(info_date)
+        # print(info_date)
         if info_date < today:
             continue
         c = open(f,'r').read()
