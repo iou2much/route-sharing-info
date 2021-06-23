@@ -1,7 +1,7 @@
 
 $(function() {
 	// var BK_URL = "http://10.22.32.15:8170/cn_api";
-	var BK_URL = "http://pin.test.seewo.com/pin/cn_api";
+	// var BK_URL = "http://pin.test.seewo.com/pin/cn_api";
 	var BK_URL = "http://ds.seewo.com/dm/pin/cn_api";
 
 	$('.inp').focus(function(){
@@ -122,7 +122,7 @@ $(function() {
 			dataType: 'json',
 			success: function(data){
 				if(data['code']==200){
-					alert('登记成功')
+					alert('登记成功,已通过企业微信/邮件通知到与您匹配的相关方(如有)。')
 					var role = $('.role:checked').val();
 					if('provider' == role){
 						role = 'not_provider'

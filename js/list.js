@@ -1,5 +1,5 @@
 // var BK_URL = "http://10.22.32.15:8170/cn_api";
-var BK_URL = "http://pin.test.seewo.com/pin/cn_api";
+// var BK_URL = "http://pin.test.seewo.com/pin/cn_api";
 var BK_URL = "http://ds.seewo.com/dm/pin/cn_api";
 var dsts = {
     'c1':'一产',
@@ -20,6 +20,9 @@ function query(role,from,to){
     dataType: 'json',
     success: function(res){
         var html = ''
+        if(res.length==0){
+            html = '<tr><td colspan="4">无匹配信息</td></tr>'
+        }
         $('.bypass_col').hide()
         for (var i=0;i<res.length;i++) {
             var from = res[i]['from'];
